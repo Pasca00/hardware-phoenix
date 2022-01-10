@@ -1,0 +1,12 @@
+.body {
+    background-color: black;
+
+}
+
+#main_div {
+    background-color: black;
+
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
