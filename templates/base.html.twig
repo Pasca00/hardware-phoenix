@@ -18,8 +18,38 @@
     </head>
     <body>
         {% block body %}
-            <div id="main_div">
-                Hello!
+            <div id="background_animation_div">
+                <img class="background_image undraggable" src="/styles/resources/background_gradient.jpg" alt="">
+            </div>
+
+            <div id="nav_bar">
+                <div id="logo" class="horizontally_centered unselectable undraggable">
+                    🐲
+                </div>
+
+                <button class="horizontally_centered" onclick="">
+                    ABOUT US
+                </button>
+
+                <button class="horizontally_centered" onclick="">
+                    DONATE
+                </button>
+
+                <button class="horizontally_centered">
+                    REQUEST
+                </button>
+
+                <button class="horizontally_centered">
+                    LOG IN
+                </button>
+
+            </div>
+
+            <div id="welcome_text_div" class="centered unselectable header_text centered_text">
+                <p class="centered_text">
+                    HARDWARE PHOENIX
+                    <&#47;🐲>
+                </p>
             </div>
         {% endblock %}
     </body>
