@@ -1,0 +1,80 @@
+.wrap_text {
+    display: inline-block;
+}
+
+.header_text {
+    font-size: 70px;
+}
+
+.centered_text {
+    text-align: center;
+}
+
+.z_min {
+    z-index: -1;
+}
+
+.z_index_1 {
+    z-index: 1;
+}
+
+.z_index_2 {
+    z-index: 2;
+}
+
+.horizontally_centered {
+    position: absolute;
+    margin: 0;
+    top: 50%;
+    transform: translate(0%, -50%);
+}
+
+.vertically_centered {
+    position: absolute;
+    margin: 0;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.centered {
+    position: absolute;
+    margin: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.unselectable {
+    -webkit-user-select: none; /* Safari */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* IE10+/Edge */
+    user-select: none
+}
+
+.undraggable {
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.large_container_div {
+    width: 100%;
+    height: 100vh;
+
+    position: relative;
+}
+
+.white_background {
+    background-color: #FFFFFF;
+}
+
+.rounded_corners {
+    border-radius: 5px;
+}
+
+.red_outline {
+    border-color: crimson;
+}
+

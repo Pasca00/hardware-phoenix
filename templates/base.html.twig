@@ -10,7 +10,11 @@
             {{ encore_entry_link_tags('app') }}
 
             <link rel="stylesheet" href="{{ asset('/styles/landing_page.css') }}">
+            <link rel="stylesheet" href="{{ asset('/styles/partials/navbar.css') }}">
+            <link rel="stylesheet" href="{{ asset('/styles/utils.css') }}">
         {% endblock %}
+
+        {% block additional_stylesheets %} {% endblock %}
 
         {% block javascripts %}
             {{ encore_entry_script_tags('app') }}
@@ -18,39 +22,21 @@
     </head>
     <body>
         {% block body %}
-            <div id="background_animation_div">
-                <img class="background_image undraggable" src="/styles/resources/background_gradient.jpg" alt="">
-            </div>
+            {% block background %}
+                {% include '/partials/background.html.twig' %}
+            {% endblock %}
 
-            <div id="nav_bar">
-                <div id="logo" class="horizontally_centered unselectable undraggable">
-                    🐲
-                </div>
+            {% block header %}
+                {% include '/partials/header.html.twig' %}
+            {% endblock %}
 
-                <button class="horizontally_centered" onclick="">
-                    ABOUT US
-                </button>
+            {% block content %}{% endblock %}
 
-                <button class="horizontally_centered" onclick="">
-                    DONATE
-                </button>
-
-                <button class="horizontally_centered">
-                    REQUEST
-                </button>
-
-                <button class="horizontally_centered">
-                    LOG IN
-                </button>
-
-            </div>
-
-            <div id="welcome_text_div" class="centered unselectable header_text centered_text">
-                <p class="centered_text">
-                    HARDWARE PHOENIX
-                    <&#47;🐲>
-                </p>
-            </div>
+            {% block footer %}
+                {% include 'partials/footer.html.twig' %}
+            {% endblock %}
         {% endblock %}
+
+        {% block additional_javascripts %}{% endblock %}
     </body>
 </html>

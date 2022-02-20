@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block content %}
+<div class="large_container_div">
+    <div id="welcome_text_div" class="centered unselectable header_text centered_text">
+        <p class="centered_text">
+            HARDWARE PHOENIX
+            <&#47;🐲>
+        </p>
+    </div>
+</div>
+
+<div class="large_container_div white_background z_index_1">
+    <div id="about_us_div" class="wrap_text z_index_1">
+        Hardware Phoenix is a non-profit organization specialized in digital
+        hardware reuse and reconstruction. It allows people to donate their hardware,
+        which is then processed, tested and donated to the less privileged.
+        To operate, the organization uses the Hardware Phoenix web platform.
+        The specification, features and way of working of the platform
+        is further described in this document.<br>
+
+        In short, the platform allows the following features:
+        <ul>
+            <li>
+                People can request to donate some piece of hardware to us
+            </li>
+            <li>
+                Volunteers process the request (take care of delivery, storage etc)
+            </li>
+            <li>
+                Volunteers process the hardware once it’s been delivered to us (categorization, tagging, decomposition into smaller parts etc)
+            </li>
+            <li>
+                Volunteers donate the hardware (or some of the parts)
+            </li>
+        </ul>
+
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme registrationForm 'themes/basicFormTheme.html.twig' %}
+
+{% block additional_stylesheets %}
+    <link rel="stylesheet" href="{{ asset('/styles/sign_in_page.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div id="form_container_div" class="wrap_text centered rounded_corners">
+        {{ form_start(registrationForm) }}
+
+            {% for child in registrationForm %}
+                {% if child.vars.name != 'submit' %}
+                    {{ form_row(child) }}
+                {% endif %}
+            {% endfor %}
+
+            {{ form_widget(registrationForm.submit, {'attr': {'class': 'form_button'}}) }}
+
+            {{ form_errors(registrationForm.mailAddress) }}
+        {{ form_end(registrationForm, {'render_rest': false}) }}
+    </div>
+{% endblock %}
+
+{% block additional_javascripts %}
+    <script>
+        let password = document.getElementById("user_password");
+        let confirmPassword = document.getElementById("user_confirmPassword");
+        let submitButton = document.getElementById("user_submit");
+
+        submitButton.disabled = true;
+
+        confirmPassword.addEventListener("input", () => {
+            if (password.value.length >= 8) {
+                if (confirmPassword.value === password.value) {
+                    password.classList.remove('red_outline');
+                    confirmPassword.classList.remove('red_outline');
+                    submitButton.disabled = false;
+                } else {
+                    password.classList.add('red_outline');
+                    confirmPassword.classList.add('red_outline');
+                    submitButton.disabled = true;
+                }
+            } else {
+                submitButton.disabled = true;
+            }
+        });
+
+    </script>
+{% endblock %}
