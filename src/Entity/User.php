@@ -7,13 +7,15 @@ use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 use JetBrains\PhpStorm\Pure;
+use phpDocumentor\Reflection\Types\Integer;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('mailAddress')]
-class User
+class User implements PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,11 +35,12 @@ class User
     #[ORM\Column(type: 'string', length: 500)]
     private $password;
 
-    #[Pure] public function __construct(UserDTO $userDTO) {
-        $this->mailAddress = $userDTO->getMailAddress();
-        $this->firstName = $userDTO->getFirstName();
-        $this->lastName = $userDTO->getLastName();
-        $this->password = $userDTO->getPassword();
+    #[ORM\Column(type: 'json')]
+    private $roles = ['ROLE_USER'];
+
+    public function __construct()
+    {
+        $this->roles = ['ROLE_USER'];
     }
 
     public function getId(): ?int
@@ -91,5 +94,26 @@ class User
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getRoles(): ?array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     * @return string|null
+     */
+    public function getSalt(): ?string
+    {
+        return null;
     }
 }
