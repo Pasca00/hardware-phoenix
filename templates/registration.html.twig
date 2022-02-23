@@ -31,6 +31,10 @@
         <div class="text_div centered_text">
             ALREADY HAVE AN ACCOUNT?
         </div>
+
+        {% if error %}
+            {{ error }}
+        {% endif %}
         <br>
         <div class="text_div centered_text">
             <a class="" href="{{ path('login') }}">

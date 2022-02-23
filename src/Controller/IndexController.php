@@ -3,20 +3,13 @@
 namespace App\Controller;
 
 use App\DTOs\UserDTO;
-use App\Entity\User;
-use App\Repository\UserRepository;
 use App\DTOs\UserType;
 use App\Services\UserRegistrationService;
-use Doctrine\Persistence\ManagerRegistry;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\PasswordHasher\Hasher\PasswordHasherFactory;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class IndexController extends AbstractController
@@ -25,7 +18,7 @@ class IndexController extends AbstractController
      * @Route("/", name="home")
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
         return $this->render('index.html.twig');
     }
@@ -34,37 +27,28 @@ class IndexController extends AbstractController
      * @Route("/register", name="register")
      * @return Response
      */
-    public function register(Request $request, ManagerRegistry $doctrine,
-                             UserRepository $repository,
-                             UserRegistrationService $userRegistrationService,
-                             UserPasswordHasherInterface $passwordHasher): Response
+    public function register(Request $request, UserRegistrationService $userRegistrationService): Response
     {
-        $entityManager = $doctrine->getManager();
-
+        $error = '';
         $registrationForm = $this->createForm(UserType::class, new UserDTO());
 
         $registrationForm->handleRequest($request);
         if ($registrationForm->isSubmitted() && $registrationForm->isValid()) {
-            // TODO: form validation needs to be done serverside as well, in case someone disables scripts.
-            $newUser = $userRegistrationService->createUser($registrationForm->getData());
-            $hashedPassword = $passwordHasher->hashPassword($newUser, $newUser->getPassword());
-            $newUser->setPassword($hashedPassword);
-
-            $user = $repository->findOneBy(['mailAddress' => $newUser->getMailAddress()]);
-            if ($user == null) {
-                $entityManager->persist($newUser);
-                $entityManager->flush();
-
-                return $this->redirectToRoute('home');
+            $dataIsValid = $userRegistrationService->createUser($registrationForm->getData());
+            if (!$dataIsValid) {
+                $error = 'User already exists';
+                return $this->renderForm('registration.html.twig', [
+                    'registrationForm' => $registrationForm,
+                    'error' => $error
+                ]);
             }
 
-            return $this->renderForm('registration.html.twig', [
-                'registrationForm' => $registrationForm,
-            ]);
+            return $this->redirectToRoute("home");
         }
 
         return $this->renderForm('registration.html.twig', [
-            'registrationForm' => $registrationForm
+            'registrationForm' => $registrationForm,
+            'error' => $error
         ]);
     }
 
