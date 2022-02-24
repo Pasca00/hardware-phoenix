@@ -8,18 +8,39 @@
 
 {% block content %}
     <div id="form_container_div" class="wrap_text centered rounded_corners">
-        {{ form_start(registrationForm) }}
+        <div class="text_div centered_text">
+            CREATE YOUR ACCOUNT
+        </div>
 
-            {% for child in registrationForm %}
-                {% if child.vars.name != 'submit' %}
-                    {{ form_row(child) }}
-                {% endif %}
-            {% endfor %}
+        <div id="form_div">
+            {{ form_start(registrationForm) }}
+                {{ form_row(registrationForm.mailAddress) }}
+                {{ form_row(registrationForm.password) }}
+                {{ form_row(registrationForm.confirmPassword) }}
+                {{ form_row(registrationForm.firstName) }}
+                {{ form_row(registrationForm.lastName) }}
 
-            {{ form_widget(registrationForm.submit, {'attr': {'class': 'form_button'}}) }}
+                {{ form_row(registrationForm.submit) }}
 
-            {{ form_errors(registrationForm.mailAddress) }}
-        {{ form_end(registrationForm, {'render_rest': false}) }}
+                {{ form_row(registrationForm._token) }}
+
+                {{ form_errors(registrationForm.mailAddress) }}
+            {{ form_end(registrationForm, {'render_rest': false}) }}
+        </div>
+
+        <div class="text_div centered_text">
+            ALREADY HAVE AN ACCOUNT?
+        </div>
+
+        {% if error %}
+            {{ error }}
+        {% endif %}
+        <br>
+        <div class="text_div centered_text">
+            <a class="" href="{{ path('login') }}">
+                SIGN IN
+            </a>
+        </div>
     </div>
 {% endblock %}
 

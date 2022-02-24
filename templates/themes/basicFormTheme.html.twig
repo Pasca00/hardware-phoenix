@@ -1,5 +1,9 @@
 {% block form_row %}
-    {%- set widget_classes = {'attr': {'class': 'form_input'}} -%}
+    {% set widget_classes = {'attr': {'class': 'form_input'}} %}
+    {{ form_widget(form, widget_classes) }}
+{% endblock %}
 
+{% block _user_submit_row %}
+    {% set widget_classes = {'attr': {'class': 'form_button'}} %}
     {{ form_widget(form, widget_classes) }}
 {% endblock %}

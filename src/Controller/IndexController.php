@@ -3,14 +3,14 @@
 namespace App\Controller;
 
 use App\DTOs\UserDTO;
-use App\Entity\User;
-use App\Repository\UserRepository;
 use App\DTOs\UserType;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Services\UserRegistrationService;
+use phpDocumentor\Reflection\Types\This;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class IndexController extends AbstractController
 {
@@ -18,7 +18,7 @@ class IndexController extends AbstractController
      * @Route("/", name="home")
      * @return Response
      */
-    public function index(Request $request): Response
+    public function index(): Response
     {
         return $this->render('index.html.twig');
     }
@@ -27,33 +27,46 @@ class IndexController extends AbstractController
      * @Route("/register", name="register")
      * @return Response
      */
-    public function register(Request $request, ManagerRegistry $doctrine, UserRepository $repository): Response
+    public function register(Request $request, UserRegistrationService $userRegistrationService): Response
     {
-        $entityManager = $doctrine->getManager();
-
+        $error = '';
         $registrationForm = $this->createForm(UserType::class, new UserDTO());
 
         $registrationForm->handleRequest($request);
         if ($registrationForm->isSubmitted() && $registrationForm->isValid()) {
-            // TODO: form validation needs to be done serverside as well, in case someone disables scripts.
-            $newUser = new User($registrationForm->getData());
-
-            $user = $repository->findOneBy(['mailAddress' => $newUser->getMailAddress()]);
-            if ($user == null) {
-                $entityManager->persist($newUser);
-                $entityManager->flush();
-
-                return $this->redirectToRoute('home');
+            $dataIsValid = $userRegistrationService->createUser($registrationForm->getData());
+            if (!$dataIsValid) {
+                $error = 'User already exists';
+                return $this->renderForm('registration.html.twig', [
+                    'registrationForm' => $registrationForm,
+                    'error' => $error
+                ]);
             }
 
-            return $this->renderForm('registration.html.twig', [
-                'registrationForm' => $registrationForm,
-                'userExistsError' => 'true'
-            ]);
+            return $this->redirectToRoute("home");
         }
 
         return $this->renderForm('registration.html.twig', [
-            'registrationForm' => $registrationForm
+            'registrationForm' => $registrationForm,
+            'error' => $error
+        ]);
+    }
+
+    /**
+     * @Route("/login", name="login")
+     * @return Response
+     */
+    public function login(Request $request,
+                          AuthenticationUtils $authenticationUtils): Response
+    {
+        $loginForm = $this->createForm(UserType::class, new UserDTO());
+        $loginForm->handleRequest($request);
+
+        $error = $authenticationUtils->getLastAuthenticationError();
+
+        return $this->renderForm('login.html.twig', [
+            'loginForm' => $loginForm,
+            'error' => $error
         ]);
     }
 }

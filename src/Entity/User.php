@@ -2,25 +2,25 @@
 
 namespace App\Entity;
 
-use App\DTOs\UserDTO;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
 
-use JetBrains\PhpStorm\Pure;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity('mailAddress')]
-class User
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private $id;
 
-    #[ORM\Column(type: 'string', length: 255, unique: true)]
+    #[ORM\Column(type: 'string', length: 255)]
     #[Assert\Email]
     private $mailAddress;
 
@@ -33,11 +33,12 @@ class User
     #[ORM\Column(type: 'string', length: 500)]
     private $password;
 
-    #[Pure] public function __construct(UserDTO $userDTO) {
-        $this->mailAddress = $userDTO->getMailAddress();
-        $this->firstName = $userDTO->getFirstName();
-        $this->lastName = $userDTO->getLastName();
-        $this->password = $userDTO->getPassword();
+    #[ORM\Column(type: 'json')]
+    private $roles = ['ROLE_USER'];
+
+    public function __construct()
+    {
+        $this->roles = ['ROLE_USER'];
     }
 
     public function getId(): ?int
@@ -91,5 +92,42 @@ class User
         $this->password = $password;
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        return $this->roles;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     * @return string|null
+     */
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public static function loadValidatorMetadata(ClassMetadata $metadata)
+    {
+        $metadata->addPropertyConstraint('mailAddress', new Assert\Email());
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // TODO: Implement getUserIdentifier() method.
+        return $this->mailAddress;
     }
 }

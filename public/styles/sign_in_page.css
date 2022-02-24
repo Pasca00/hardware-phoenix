@@ -2,10 +2,34 @@
     position: fixed;
 
     background-color: #FFFFFF;
-    padding: 100px;
+    padding: 50px 100px;
 
     font-family: inherit;
     font-weight: bold;
+}
+
+#form_container_div a {
+    text-decoration: none;
+    color: black;
+
+    transition: color 250ms ease-in-out;
+}
+
+#form_container_div a:hover {
+    color: var(--main_green);
+}
+
+#form_div {
+    position: relative;
+    font-family: inherit;
+    font-weight: inherit;
+    margin: 10px 10px 20px;
+}
+
+.text_div {
+    position: relative;
+    font-family: inherit;
+    font-weight: inherit;
 }
 
 .form_input {

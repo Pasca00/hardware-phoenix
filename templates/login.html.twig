@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme loginForm 'themes/basicFormTheme.html.twig' %}
+
+{% block additional_stylesheets %}
+    <link rel="stylesheet" href="{{ asset('/styles/sign_in_page.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div id="form_container_div" class="wrap_text centered rounded_corners">
+        <div class="text_div centered_text">
+            SIGN INTO YOUR ACCOUNT
+        </div>
+
+        <div id="form_div">
+            {% if error %}
+                <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+
+            <form action="{{ path('login') }}" method="post" name="loginForm">
+                <input class="form_input" name="_username" type="email" placeholder="E-MAIL ADDRESS"/>
+                <input class="form_input" name="_password" type="password" placeholder="PASSWORD"/>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button class="form_button" type="submit">Submit</button>
+            </form>
+
+        </div>
+
+        <div class="text_div centered_text">
+            OR
+        </div>
+        <br>
+        <div class="text_div centered_text">
+            <a class="" href="{{ path('register') }}">
+                CREATE AN ACCOUNT
+            </a>
+        </div>
+    </div>
+{% endblock %}
