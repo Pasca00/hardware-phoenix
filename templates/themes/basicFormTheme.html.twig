@@ -7,3 +7,18 @@
     {% set widget_classes = {'attr': {'class': 'form_button'}} %}
     {{ form_widget(form, widget_classes) }}
 {% endblock %}
+
+{% block _donation_submit_row %}
+    {% set widget_classes = {'attr': {'class': 'form_button'}} %}
+    {{ form_widget(form, widget_classes) }}
+{% endblock %}
+
+{% block _donation_public_row %}
+    {% set widget_classes = {'attr': {'class': ''}} %}
+    {{ form_widget(form, widget_classes) }}
+{% endblock %}
+
+{% block _donation_imageFiles_row %}
+    {% set widget_classes = {'attr': {'class': 'form_input file_input'}} %}
+    {{ form_widget(form, widget_classes) }}
+{% endblock %}
