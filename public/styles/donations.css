@@ -104,3 +104,44 @@
 .active {
     opacity: 1;
 }
+
+.listing_images_container {
+    position: relative;
+}
+
+.slideshow_button {
+    position: absolute;
+
+    box-sizing: border-box;
+
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    opacity: 0.5;
+    padding: 15px;
+    height: 100%;
+    top: 0;
+    bottom: 0;
+    user-select: none;
+
+    display: table-cell;
+    vertical-align: middle;
+
+    transition: opacity 250ms ease-in-out;
+
+    cursor: pointer;
+}
+
+.prev {
+    left: 7px;
+    border-radius: 5px 0 0 5px;
+}
+
+.next {
+    right: 7px;
+    border-radius: 0 5px 5px 0;
+}
+
+.prev:hover, .next:hover {
+    opacity: 1;
+}
