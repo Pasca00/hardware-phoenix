@@ -7,7 +7,7 @@
         ABOUT US
     </a>
 
-    <a class="horizontally_centered unselectable" href="">
+    <a class="horizontally_centered unselectable" href="{{ path('donate') }}">
         DONATE
     </a>
 
@@ -16,7 +16,7 @@
     </a>
 
     {% if is_granted('ROLE_USER') %}
-        <a class="horizontally_centered unselectable" href="">
+        <a class="horizontally_centered unselectable" href="{{ path('logout') }}">
             PROFILE
         </a>
     {% else %}

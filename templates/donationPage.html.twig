@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% form_theme form 'themes/basicFormTheme.html.twig' %}
+
+{% block additional_stylesheets %}
+    <link rel="stylesheet" href="{{ asset('/styles/forms.css') }}">
+{% endblock %}
+
+{% block content %}
+    <div id="form_container_div" class="wrap_text centered rounded_corners">
+        <div id="form_div">
+            {{ form_start(form) }}
+                {{ form_row(form.firstName) }}
+                {{ form_row(form.lastName) }}
+                {{ form_row(form.mailAddress) }}
+                {{ form_row(form.phoneNumber) }}
+                {{ form_row(form.description) }}
+
+                <div class="form_input" id="file_container_div">
+                    <input name="donation[imageFiles][]" type="file" multiple accept="image/*" class="file_input" id="donation_imageFiles"/>
+                    <label style="width: 100%;"></label>
+                </div>
+
+                {{ form_row(form.submit) }}
+
+                <div class="text_div wrap_text centered_text">
+                    {{ form_row(form.public) }}
+                    I want my name to be publicly displayed on the website’s list of donors
+                </div>
+
+                {{ form_row(form._token) }}
+            {{ form_end(form, {'render_rest': false}) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block additional_javascripts %}
+    <script>
+        let fileInput = document.getElementById('donation_imageFiles');
+
+        fileInput.onchange = function () {
+            let images = fileInput.files;
+            console.log(images.length);
+
+            let prevChildren = document.getElementById("file_container_div").getElementsByClassName("images");
+            for (let i = 0; i < prevChildren.length; i++) {
+                document.getElementById("file_container_div").removeChild(prevChildren[i]);
+            }
+
+            for (let i = 0; i < images.length; i++) {
+                let imgRender = document.createElement("img");
+                imgRender.setAttribute("src", URL.createObjectURL(images[i]));
+                imgRender.setAttribute("class", "images rounded_corners");
+
+                let imgRemoveButton = document.createElement("button");
+                imgRemoveButton.setAttribute("class", "image_remove_button");
+                imgRender.appendChild(imgRemoveButton);
+
+                document.getElementById("file_container_div").appendChild(imgRender);
+            }
+        }
+    </script>
+{% endblock %}
