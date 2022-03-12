@@ -1,0 +1,95 @@
+{% extends 'base.html.twig' %}
+
+{% block additional_stylesheets %}
+    <link rel="stylesheet" href="{{ asset('/styles/donations.css') }}">
+{% endblock %}
+
+{% block content %}
+        <div id="list_container_div" class="vertically_centered rounded_corners">
+            <template id="listing_template">
+                <div class="donation_listing rounded_corners">
+                    <div class="listing_modifiable_content_container">
+                        <div class="listing_personal_information_container">
+                            <div class="donation_id data_field wrap_text"></div>
+
+                            <div class="donor_name data_field wrap_text">
+                                By
+                            </div>
+
+                            <div class="date_submitted data_field wrap_text"></div>
+
+                            <div class="listing_images_container">
+
+                            </div>
+                        </div>
+                        <div class="listing_description_container">
+
+                        </div>
+                    </div>
+
+                    <a class="view_listing_button rounded_corners wrap_text centered_text">
+                        VIEW
+                    </a>
+                </div>
+            </template>
+        </div>
+{% endblock %}
+
+{% block additional_javascripts %}
+<script>
+    let lastListingIndex = 0;
+
+    function buildDonationSlideshow(newListing, response) {
+        if (response.files.length === 0) {
+            return;
+        }
+
+        let images = newListing.querySelector(".listing_images_container");
+        response.files.forEach((fileName, fileIndex) => {
+            let newImageSlideContainer = document.createElement("div");
+            newImageSlideContainer.classList.add("slide");
+            images.appendChild(newImageSlideContainer);
+
+            let newImage = document.createElement("img");
+            newImage.src = fileName;
+            newImageSlideContainer.appendChild(newImage);
+        });
+
+        let slides = images.getElementsByClassName("slide");
+        slides[0].style.display = "flex";
+    }
+
+    function fetchDonations() {
+        fetch('/api/donations')
+            .then((response) => {
+                return response.json()
+            })
+            .then((response) => {
+                let container = document.getElementById("list_container_div");
+                let template = document.querySelector("#listing_template");
+
+                response.forEach((value, index) => {
+                    let newListing = template.content.cloneNode(true);
+                    newListing.querySelector(".donation_id").textContent += "#" + value.index;
+                    newListing.querySelector(".listing_description_container").textContent = value.description;
+                    newListing.querySelector(".date_submitted").textContent = value.dateSubmitted;
+
+                    if (value.public) {
+                        newListing.querySelector(".donor_name").textContent += value.firstName + " " + value.lastName;
+                    } else {
+                        newListing.querySelector(".donor_name").textContent += "Anonymous";
+                    }
+
+                    buildDonationSlideshow(newListing, value);
+
+                    container.appendChild(newListing);
+                });
+            })
+    }
+
+    fetchDonations()
+</script>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

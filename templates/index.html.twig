@@ -1,6 +1,12 @@
 {% extends 'base.html.twig' %}
 
 {% block content %}
+    {% for message in app.flashes('notice') %}
+        <div class="flash-notice wrap_text vertically_centered">
+            {{ message }}
+        </div>
+    {% endfor %}
+
 <div class="large_container_div">
     <div id="welcome_text_div" class="centered unselectable header_text centered_text">
         <p class="centered_text">
@@ -37,4 +43,16 @@
 
     </div>
 </div>
+{% endblock %}
+
+{% block additional_javascripts %}
+    <script>
+        let onTimeout = setTimeout(function () {
+            let flashMessages = document.getElementsByClassName('flash-notice')
+            for (let i = 0; i < flashMessages.length; i++) {
+                flashMessages[i].remove();
+            }
+        }, 3000)
+
+    </script>
 {% endblock %}

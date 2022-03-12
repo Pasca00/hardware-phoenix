@@ -25,6 +25,10 @@ class Document
     #[ORM\Column(type: 'bigint')]
     private $size;
 
+    #[ORM\ManyToOne(targetEntity: DonationDocument::class, inversedBy: 'documents')]
+    #[ORM\JoinColumn(nullable: false)]
+    private $correspondingDonation;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +78,18 @@ class Document
     public function setSize(string $size): self
     {
         $this->size = $size;
+
+        return $this;
+    }
+
+    public function getCorrespondingDonation(): ?DonationDocument
+    {
+        return $this->correspondingDonation;
+    }
+
+    public function setCorrespondingDonation(?DonationDocument $correspondingDonation): self
+    {
+        $this->correspondingDonation = $correspondingDonation;
 
         return $this;
     }
