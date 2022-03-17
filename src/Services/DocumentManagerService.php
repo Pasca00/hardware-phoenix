@@ -3,36 +3,36 @@
 namespace App\Services;
 
 use App\Entity\Document;
-use Doctrine\ORM\EntityManager;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use App\Entity\DonationDocument;
+use Doctrine\ORM\EntityManagerInterface;
 
 class DocumentManagerService
 {
-    private $params;
-    private ManagerRegistry $doctrine;
+    private string $documentDirectory;
+    private EntityManagerInterface $entityManager;
 
-    public function __construct(ParameterBagInterface $params, ManagerRegistry $doctrine)
+    public function __construct(string $documentDirectory, EntityManagerInterface $entityManager)
     {
-        $this->params = $params;
-        $this->doctrine = $doctrine;
+        $this->documentDirectory = $documentDirectory;
+        $this->entityManager = $entityManager;
     }
 
-    public function saveFiles(array $files, array $generatedFilenames): void
+    public function saveFiles(array $files, array $generatedFilenames, DonationDocument $donationDocument): void
     {
         for ($i = 0; $i < count($files[0]); $i++) {
-            $files[0][$i]->move($this->params->get('kernel.project_dir').$this->params->get('documentDirectory'),
-                $generatedFilenames[$i]);
+            $files[0][$i]->move($this->documentDirectory, $generatedFilenames[$i]);
 
             $newDocument = new Document();
             $newDocument->setOriginalFilename($files[0][$i]->getClientOriginalName())
                 ->setGeneratedFilename($generatedFilenames[$i])
                 ->setMimeType($files[0][$i]->getClientOriginalExtension())
-                ->setSize(8192);
+                ->setSize(1000);
 
-            $entityManager = $this->doctrine->getManager();
-            $entityManager->persist($newDocument);
-            $entityManager->flush();
+            $this->entityManager->persist($newDocument);
+            $donationDocument->addDocument($newDocument);
+            $this->entityManager->persist($donationDocument);
         }
+
+        $this->entityManager->flush();
     }
 }

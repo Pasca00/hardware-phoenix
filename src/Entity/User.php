@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
@@ -36,9 +38,13 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     #[ORM\Column(type: 'json')]
     private $roles = ['ROLE_USER'];
 
+    #[ORM\OneToMany(mappedBy: 'createdBy', targetEntity: Donation::class)]
+    private $donations;
+
     public function __construct()
     {
         $this->roles = ['ROLE_USER'];
+        $this->donations = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -129,5 +135,35 @@ class User implements PasswordAuthenticatedUserInterface, UserInterface
     {
         // TODO: Implement getUserIdentifier() method.
         return $this->mailAddress;
+    }
+
+    /**
+     * @return Collection<int, Donation>
+     */
+    public function getDonations(): Collection
+    {
+        return $this->donations;
+    }
+
+    public function addDonation(Donation $donation): self
+    {
+        if (!$this->donations->contains($donation)) {
+            $this->donations[] = $donation;
+            $donation->setCreatedBy($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDonation(Donation $donation): self
+    {
+        if ($this->donations->removeElement($donation)) {
+            // set the owning side to null (unless already changed)
+            if ($donation->getCreatedBy() === $this) {
+                $donation->setCreatedBy(null);
+            }
+        }
+
+        return $this;
     }
 }

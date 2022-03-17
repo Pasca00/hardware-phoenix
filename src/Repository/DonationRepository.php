@@ -18,4 +18,16 @@ class DonationRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Donation::class);
     }
+
+    public function getCollection(int $lastID, int $size)
+    {
+        $query = $this->createQueryBuilder('donation')
+            ->where('donation.id > :indexMin')
+            ->setParameter('indexMin', $lastID)
+            ->orderBy('donation.id', 'ASC');
+
+        $query->setMaxResults($size + 1);
+
+        return $query->getQuery()->execute();
+    }
 }

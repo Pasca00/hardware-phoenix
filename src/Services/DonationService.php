@@ -4,30 +4,31 @@ namespace App\Services;
 
 use App\DTOs\DonationDTO;
 use App\Entity\Donation;
-use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\Form\FormInterface;
+use App\Entity\DonationDocument;
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class DonationUploaderService
+class DonationService
 {
     private ValidatorInterface $validator;
-    private ManagerRegistry $doctrine;
+    private EntityManagerInterface $entityManager;
     private Security $security;
     private DocumentManagerService $documentManager;
 
-    public function __construct(ManagerRegistry $doctrine,
-                                ValidatorInterface $validator,
+    public function __construct(ValidatorInterface $validator,
+                                EntityManagerInterface $entityManager,
                                 Security $security,
                                 DocumentManagerService $documentManager)
     {
         $this->validator = $validator;
-        $this->doctrine = $doctrine;
+        $this->entityManager = $entityManager;
         $this->security = $security;
         $this->documentManager = $documentManager;
     }
 
-    public function createDonation(DonationDTO $donationDTO, string $directory): bool
+    public function createDonation(DonationDTO $donationDTO): bool
     {
         $newDonation = new Donation();
         $newDonation->setFirstName($donationDTO->getFirstName())
@@ -39,23 +40,36 @@ class DonationUploaderService
             ->setTimeCreated(new \DateTime());
 
         $user = $this->security->getUser();
-        if ($user != null) {
-            $newDonation->setCreatedBy($user->getId());
+        if ($user instanceof User) {
+            $newDonation->setCreatedBy($user);
         }
 
+        $newDonationDocument = new DonationDocument();
+        $newDonationDocument->setDonation($newDonation);
+
         $images = $donationDTO->getImageFiles();
+        if ($images) {
+            $generatedFilenames = $this->generateFilenames($images);
+            $this->documentManager->saveFiles($images, $generatedFilenames, $newDonationDocument);
+        }
+
+        $this->entityManager->persist($newDonationDocument);
+
+        $this->entityManager->persist($newDonation);
+        $this->entityManager->flush();
+
+        return false;
+    }
+
+    private function generateFilenames($images): array
+    {
         $generatedFilenames = [];
         $i = 0;
         foreach ($images[0] as $image) {
             $generatedFilenames[$i] = md5(uniqid()).'.'.$image->getClientOriginalExtension();
             $i++;
         }
-        $this->documentManager->saveFiles($images, $generatedFilenames);
 
-        $entityManager = $this->doctrine->getManager();
-        $entityManager->persist($newDonation);
-        $entityManager->flush();
-
-        return false;
+        return $generatedFilenames;
     }
 }

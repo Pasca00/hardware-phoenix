@@ -35,6 +35,8 @@ class SecurityController extends AbstractController
                 ]);
             }
 
+            $this->addFlash('notice', 'Account created successfully.');
+
             return $this->redirectToRoute("home");
         }
 

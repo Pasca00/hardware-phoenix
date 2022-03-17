@@ -33,14 +33,17 @@ class Donation
     #[ORM\Column(type: 'boolean')]
     private $public;
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private $createdBy;
-
     #[ORM\Column(type: 'string', length: 255)]
     private $status = 'NEW';
 
     #[ORM\Column(type: 'datetime')]
     private $timeCreated;
+
+    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'donations')]
+    private $createdBy;
+
+    #[ORM\OneToOne(mappedBy: 'donation', targetEntity: DonationDocument::class, cascade: ['persist', 'remove'])]
+    private $documents;
 
     public function getId(): ?int
     {
@@ -119,18 +122,6 @@ class Donation
         return $this;
     }
 
-    public function getCreatedBy(): ?int
-    {
-        return $this->createdBy;
-    }
-
-    public function setCreatedBy(?int $createdBy): self
-    {
-        $this->createdBy = $createdBy;
-
-        return $this;
-    }
-
     public function getStatus(): ?string
     {
         return $this->status;
@@ -151,6 +142,35 @@ class Donation
     public function setTimeCreated(\DateTimeInterface $timeCreated): self
     {
         $this->timeCreated = $timeCreated;
+
+        return $this;
+    }
+
+    public function getCreatedBy(): ?User
+    {
+        return $this->createdBy;
+    }
+
+    public function setCreatedBy(?User $createdBy): self
+    {
+        $this->createdBy = $createdBy;
+
+        return $this;
+    }
+
+    public function getDocuments(): ?DonationDocument
+    {
+        return $this->documents;
+    }
+
+    public function setDocuments(DonationDocument $documents): self
+    {
+        // set the owning side of the relation if necessary
+        if ($documents->getDonation() !== $this) {
+            $documents->setDonation($this);
+        }
+
+        $this->documents = $documents;
 
         return $this;
     }

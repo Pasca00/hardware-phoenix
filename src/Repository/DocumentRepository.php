@@ -18,4 +18,13 @@ class DocumentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Document::class);
     }
+
+    public function getDonationCorrespondingDocuments(int $donationID)
+    {
+        $query = $this->createQueryBuilder('document')
+                ->where('document.correspondingDonation = :requiredID')
+                ->setParameter('requiredID', $donationID);
+
+        return $query->getQuery()->execute();
+    }
 }
